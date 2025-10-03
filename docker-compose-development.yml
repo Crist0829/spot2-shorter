@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: ./compose/nginx/development/Dockerfile
+    container_name: spot_app_development
+    environment:
+      VIRTUAL_HOST: development.spot-shorter.click
+      LETSENCRYPT_HOST: development.spot-shorter.click
+      LETSENCRYPT_EMAIL: ccjd.0796@gmail.com
+    networks:
+      - spot_net_dev
+      - nginx-proxy
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+
+  db:
+    image: mysql:8.0
+    container_name: ne_mysql_development
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:3306"
+    networks:
+      - spot_net_dev
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  redis:
+    image: "redis:alpine"
+    container_name: ne_redis_development
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    networks:
+      - spot_net_dev
+
+networks:
+  nginx-proxy:
+    external: true
+  spot_net_dev:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

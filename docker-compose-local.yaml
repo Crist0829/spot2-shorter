@@ -1,0 +1,137 @@
+networks:
+  spotnet:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
+  mailpitdata:
+    driver: local
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/nginx/local/Dockerfile
+    container_name: spot_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html:delegated
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - spotnet
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: spot_mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: spot_mysql
+    volumes:
+      - dbdata:/var/lib/mysql/
+    networks:
+      - spotnet
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: spot_mailpit
+    restart: unless-stopped
+    volumes:
+      - mailpitdata:/data
+    ports:
+      - 8025:8025
+      - 1025:1025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - spotnet
+
+  redis:
+    image: "redis:alpine"
+    container_name: spot_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - spotnet
+
+  php:
+    build:
+      context: .
+      dockerfile: ./compose/php/Dockerfile
+    container_name: spot_php
+    volumes:
+      - .:/var/www/html:delegated
+    ports:
+      - "9000:9000"
+    networks:
+      - spotnet
+    restart: unless-stopped
+
+  composer:
+    build:
+      context: .
+      dockerfile: ./compose/php/composer/Dockerfile
+    container_name: spot_composer
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - php
+    networks:
+      - spotnet
+    entrypoint: ['composer']
+
+  npm:
+    image: node:20
+    container_name: spot_npm
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: ['npm']
+    ports:
+      - "5174:5174"
+    stdin_open: true
+    tty: true
+    networks:
+      - spotnet
+
+  artisan:
+    build:
+      context: .
+      dockerfile: ./compose/php/Dockerfile
+    container_name: spot_artisan
+    volumes:
+      - .:/var/www/html:delegated
+    depends_on:
+      - mysql
+    working_dir: /var/www/html
+    entrypoint: ['php', '/var/www/html/artisan']
+    networks:
+      - spotnet
+
+  adminer:
+    image: adminer
+    container_name: spot_adminer
+    restart: always
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    ports:
+      - 8085:8080
+    networks:
+      - spotnet

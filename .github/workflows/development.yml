@@ -1,0 +1,47 @@
+name: Build and Deploy Ne Training Development Environment
+
+on:
+  push: 
+    branches: 
+      - develop
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ne_training_development
+  DEPLOY_DIR: /home/ccjd_0796/ne-training-development
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
+      - name: "Copy Source Code"
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_SECRET }}
+          source: './'
+          target: ${{ env.DEPLOY_DIR }}
+          strip_components: 1
+
+      - name: "Build And Deploy to server"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_SECRET }}
+          script: |
+            cd ${{ env.DEPLOY_DIR }}
+            cat << EOF > ./.env
+            ${{ secrets.DEV_ENV_FILE }}
+            EOF
+            docker-compose -f docker-compose-development.yml down
+            docker-compose -f docker-compose-development.yml up --build -d
+            docker exec ne_training_development sh -c  'chmod 777 -R ./storage/'
+            docker exec ne_training_development sh -c  'npm run build'
+            docker image prune -a --force --filter "until=168h"
+
+ 
