@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: ne_training_development
+  PROJECT_ID: spot_app_development
   DEPLOY_DIR: /home/ccjd.0706/spot-app-development
 
 jobs:
