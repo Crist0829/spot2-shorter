@@ -38,10 +38,10 @@ jobs:
             cat << EOF > ./.env
             ${{ secrets.DEV_ENV_FILE }}
             EOF
-            docker-compose -f docker-compose-development.yml down
-            docker-compose -f docker-compose-development.yml up --build -d
-            docker exec ne_training_development sh -c  'chmod 777 -R ./storage/'
-            docker exec ne_training_development sh -c  'npm run build'
+            docker compose -f docker-compose-development.yml down
+            docker compose -f docker-compose-development.yml up --build -d
+            docker exec spot_app_dev sh -c  'chmod 777 -R ./storage/'
+            docker exec spot_app_dev sh -c  'npm run build'
             docker image prune -a --force --filter "until=168h"
 
  
