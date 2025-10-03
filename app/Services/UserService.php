@@ -31,7 +31,7 @@ class UserService {
         try{
             DB::beginTransaction();
             $data['actived'] = $data['actived'] ? now() : null;
-            $data['password'] = Hash::make($data['password']);
+            $data['password'] = isset($data['password']) ? Hash::make($data['password']) : null;
             $user = $this->userRepository->create($data);
             $role = $this->roleRepository->getById(Role::ROLE_USER);
             $user->roles()->save($role);
@@ -39,6 +39,7 @@ class UserService {
             return [
                 "error" => false, 
                 "status" => 200, 
+                "user" => $user,
                 "message" => "El usuario se creó correctamente"
             ];
 

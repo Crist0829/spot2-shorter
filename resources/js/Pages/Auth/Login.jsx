@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import GoogleIcon from "@/icons/GoogleIcon";
 
 export default function Login({ status, canResetPassword }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, isDirty } = useForm({
         email: "",
         password: "",
         remember: false,
@@ -44,7 +45,9 @@ export default function Login({ status, canResetPassword }) {
 
                     <form onSubmit={submit}>
                         <div>
-                            <Label htmlFor="email" className="ml-2" >Email</Label>
+                            <Label htmlFor="email" className="ml-2">
+                                Email
+                            </Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -63,7 +66,9 @@ export default function Login({ status, canResetPassword }) {
                         </div>
 
                         <div className="mt-4">
-                            <Label htmlFor="password" className="ml-2">Contraseña</Label>
+                            <Label htmlFor="password" className="ml-2">
+                                Contraseña
+                            </Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -95,9 +100,6 @@ export default function Login({ status, canResetPassword }) {
                                     </span>
                                 </label>
                             </div>
-
-
-                            
                         </div>
 
                         <div className="mt-7 mb-4">
@@ -108,6 +110,21 @@ export default function Login({ status, canResetPassword }) {
                                 type="submit"
                             >
                                 Iniciar sesión
+                            </Button>
+                        </div>
+                        <div className="mt-7 mb-4">
+                            <Button
+                                type="button"
+                                className=" w-full flex mt-6  items-center gap-1 rounded-2xl"
+                                disabled={isDirty || processing}
+                                onClick={() => {
+                                    window.location.href = route("auth.google");
+                                }}
+                            >
+                                <>
+                                    Google
+                                    <GoogleIcon width={24} />
+                                </>
                             </Button>
                         </div>
                     </form>
