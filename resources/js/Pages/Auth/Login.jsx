@@ -22,7 +22,6 @@ export default function Login({ status, canResetPassword }) {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route("login"));
     };
 
@@ -31,15 +30,15 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Log in" />
 
             {status && (
-                <div className="mb-4 font-medium text-sm text-green-600">
+                <div className="mb-4 font-medium text-sm text-green-600 text-center">
                     {status}
                 </div>
             )}
 
-            <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-2xl">
+            <div className="w-full md:ml-56 sm:max-w-md px-6 py-6 bg-white shadow-md sm:rounded-2xl">
                 <div>
-                    <h1 className="text-xl font-bold">Iniciar sesión</h1>
-                    <h1 className="text-sm text-gray-600 mb-6">
+                    <h1 className="text-xl font-bold text-center">Iniciar sesión</h1>
+                    <h1 className="text-sm text-gray-600 mb-6 text-center">
                         Accede con tu email y contraseña
                     </h1>
 
@@ -80,31 +79,27 @@ export default function Login({ status, canResetPassword }) {
                                     setData("password", e.target.value)
                                 }
                             />
-
                             <p className="my-2 text-xs text-red-700">
                                 {errors.password}
                             </p>
                         </div>
 
                         <div className="flex justify-between mt-6">
-                            <div>
-                                <label className="flex items-center">
-                                    <Switch
-                                        name="remember"
-                                        onCheckedChange={(e) =>
-                                            setData("remember", e)
-                                        }
-                                    />
-                                    <span className="ms-2 text-sm text-gray-600">
-                                        Recordarme
-                                    </span>
-                                </label>
-                            </div>
+                            <label className="flex items-center">
+                                <Switch
+                                    name="remember"
+                                    onCheckedChange={(e) =>
+                                        setData("remember", e)
+                                    }
+                                />
+                                <span className="ms-2 text-sm text-gray-600">
+                                    Recordarme
+                                </span>
+                            </label>
                         </div>
 
                         <div className="mt-7 mb-4">
                             <Button
-                                variant=""
                                 className="w-full rounded-2xl"
                                 disabled={processing}
                                 type="submit"
@@ -112,19 +107,17 @@ export default function Login({ status, canResetPassword }) {
                                 Iniciar sesión
                             </Button>
                         </div>
-                        <div className="mt-7 mb-4">
+                        <hr className=" border-t border-gray-300"/>
+                        <div className="mt-4">
                             <Button
                                 type="button"
-                                className=" w-full flex mt-6  items-center gap-1 rounded-2xl"
+                                className="w-full flex items-center justify-center gap-2 rounded-2xl"
                                 disabled={isDirty || processing}
                                 onClick={() => {
                                     window.location.href = route("auth.google");
                                 }}
                             >
-                                <>
-                                    Google
-                                    <GoogleIcon width={24} />
-                                </>
+                               Incia con Google <GoogleIcon width={20} />
                             </Button>
                         </div>
                     </form>

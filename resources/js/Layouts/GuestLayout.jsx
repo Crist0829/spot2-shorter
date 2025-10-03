@@ -71,7 +71,7 @@ export default function Guest({ children }) {
             </main>
 
             <footer className="w-full">
-                <div className="mx-auto px-4 py-6 flex flex-col sm:flex-row items-start justify-between gap-4">
+                <div className="mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="text-xs text-gray-500 max-w-xs text-center sm:text-left">
                         Este proyecto es un challenge técnico para spot2, su uso
                         es solamente para fines internos no comerciales y el uso

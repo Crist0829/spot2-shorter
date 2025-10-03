@@ -4,9 +4,10 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import GoogleIcon from "@/icons/GoogleIcon";
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, isDirty } = useForm({
         name: "",
         email: "",
         password: "",
@@ -29,10 +30,10 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
-            <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-2xl">
+            <div className="w-full sm:max-w-md md:ml-56  mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-2xl">
                 <div className="flex flex-col">
-                    <h1 className="text-xl font-bold">Registrate</h1>
-                    <h1 className="text-sm text-gray-600 mb-6">
+                <h1 className="text-xl font-bold text-center">Registrate</h1>
+                    <h1 className="text-sm text-gray-600 mb-6 text-center">
                         Crea una cuenta y disfruta los beneficios
                     </h1>
                     <form onSubmit={submit}>
@@ -119,12 +120,27 @@ export default function Register() {
                             </p>
                         </div>
 
-                        <div className="my-8">
+                        <div className="mt-6 mb-4">
                             <Button
                                 className="w-full rounded-2xl"
                                 disabled={processing}
                             >
-                                Registrar
+                                Registrarse
+                            </Button>
+                        </div>
+
+                                <hr className=" border-t border-gray-300"/>
+
+                        <div className="mt-4">
+                            <Button
+                                type="button"
+                                className="w-full flex items-center justify-center gap-2 rounded-2xl"
+                                disabled={isDirty || processing}
+                                onClick={() => {
+                                    window.location.href = route("auth.google");
+                                }}
+                            >
+                                Registrarse con Google <GoogleIcon width={20} />
                             </Button>
                         </div>
                     </form>
