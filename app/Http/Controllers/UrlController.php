@@ -34,6 +34,7 @@ class UrlController extends Controller
         $data["ip"] = $request->ip();
         $response = $this->urlService->createFromGuest($data);
         session()->flash($response["error"] ? 'not_success' : 'success', $response["message"]);
+        return back();
     }
 
    
@@ -41,6 +42,7 @@ class UrlController extends Controller
     public function deleteFromGuest(string $url_id, Request $request){
         $response = $this->urlService->deleteFromGuest($url_id, $request->ip());
         session()->flash($response["error"] ? 'not_success' : 'success', $response["message"]);
+        return back();
     }
 
     //--- End Guest  ---//
@@ -66,12 +68,13 @@ class UrlController extends Controller
 
         $response = $this->urlService->create($data);
         session()->flash($response["error"] ? 'not_success' : 'success', $response["message"]);
-
+        return back();
     }
 
     public function update(string $url_id, Request $request){
         $response = $this->urlService->update($request->all(), $url_id, auth()->user()->id);
         session()->flash($response["error"] ? 'not_success' : 'success', $response["message"]);
+        return back();
     }
 
     public function regenerate(string $url_id){

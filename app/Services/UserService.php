@@ -58,6 +58,8 @@ class UserService {
     }
 
 
+
+
     public function update(array $data, $userId){
 
         try{
