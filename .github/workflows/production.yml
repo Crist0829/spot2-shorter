@@ -1,4 +1,4 @@
-name: Build and Deploy Ne Training Production Environment
+name: Build and Deploy Spot Shorter Production Environment
 
 on:
   push: 
