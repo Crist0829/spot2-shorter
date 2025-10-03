@@ -25,8 +25,8 @@ Este proyecto es una aplicación Laravel que puede ejecutarse de dos formas:
 
 1. Clona el repositorio:
    ```bash
-   git clone git@github.com:TU-USUARIO/TU-REPO.git
-   cd TU-REPO
+   git clone https://github.com/Crist0829/spot2-shorter.git
+   cd spot2-shorter
    ```
 
 2. Copia el archivo de entorno:
