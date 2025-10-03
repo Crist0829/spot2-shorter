@@ -38,8 +38,8 @@ jobs:
             cat << EOF > ./.env
             ${{ secrets.PROD_ENV_FILE }}
             EOF
-            docker-compose -f docker-compose.yaml down
-            docker-compose -f docker-compose.yaml up --build -d
+            docker compose -f docker-compose.yaml down
+            docker compose -f docker-compose.yaml up --build -d
             docker exec spot_app sh -c  'chmod 777 -R ./storage/'
             docker exec spot_app sh -c  'npm run build'
             docker image prune -a --force --filter "until=168h"
