@@ -8,7 +8,7 @@ on:
 
 env:
   PROJECT_ID: ne_training_development
-  DEPLOY_DIR: DEPLOY_DIR: /home/ccjd.0706/spot-app-development
+  DEPLOY_DIR: /home/ccjd_0796/ne-training-development
 
 jobs:
   build_and_deploy:
