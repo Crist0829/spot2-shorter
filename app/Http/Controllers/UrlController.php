@@ -69,7 +69,6 @@ class UrlController extends Controller
 
     }
 
-
     public function update(string $url_id, Request $request){
         $response = $this->urlService->update($request->all(), $url_id, auth()->user()->id);
         session()->flash($response["error"] ? 'not_success' : 'success', $response["message"]);
@@ -85,5 +84,18 @@ class UrlController extends Controller
         $response = $this->urlService->delete($url_id, auth()->user()->id);
         session()->flash($response["error"] ? 'not_success' : 'success', $response["message"]);
     }
+
+    public function redirect(string $code){
+
+        $response = $this->urlService->validateUrlToRedirect($code);
+        if($response['error'])
+            return Inertia::render('RedirectError', ["message" =>  $response['message']]);
+
+        return redirect($response['url']);
+
+    }
+
+    //--- Authenticated ---//
+
 
 }

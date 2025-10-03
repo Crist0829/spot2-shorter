@@ -43,9 +43,9 @@ class BaseRepository implements BaseRepositoryInterface {
     }
 
 
-    public function getFirstByFilters(array $filters = []) : Model | null
+    public function getFirstByFilters(array $relations = [], array $filters = []) : Model | null
     {
-        $model = $this->model->where($filters)->first();
+        $model = $this->model->with($relations)->where($filters)->first();
         return $model;
     }
 

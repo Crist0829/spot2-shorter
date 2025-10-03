@@ -9,7 +9,7 @@ Route::get('/', [UrlController::class, 'home'])->name('home');
 Route::post('urls/guest', [UrlController::class, 'createFromGuest'])->name('urls.createFromGuest');
 Route::delete('urls/guest/{url_id}', [UrlController::class, 'deleteFromGuest'])->name('urls.deleteFromGuest');
 
-
+Route::get('short/{code}', [UrlController::class, 'redirect'])->name('urls.redirect');
 
 
 Route::middleware('auth')->group(function (){

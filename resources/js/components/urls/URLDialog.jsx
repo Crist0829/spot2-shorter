@@ -23,8 +23,10 @@ const URLDialog = ({ triggerLabel = "Abrir" }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("urls.create"), data)
-        reset()
+        post(route("urls.create"), {
+            onSuccess : () => reset()
+        })
+        
     };
 
     return (

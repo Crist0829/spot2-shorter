@@ -12,8 +12,6 @@ class Url extends Model
 
     protected $fillable = ["url", "code", "user_id", "actived", "expiration_time", "expiration_clicks", "ip"];
 
-
-
     public function visits() : HasMany
     {
         return $this->hasMany(UrlVisit::class, 'url_id');

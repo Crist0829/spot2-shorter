@@ -180,10 +180,43 @@ class UrlService {
 
 
     public function getUrlsByUserId(string $userId){
-
-        //dd($userId);
         $urls = $this->urlRepository->getAll(['visits'], [["user_id", "=", $userId]]);
         return $urls;
+    }
+
+
+    public function validateUrlToRedirect(string $code){
+
+        $url = $this->urlRepository->getFirstByFilters(['visits'], [['code', '=', $code]]);
+
+        if(!$url)
+            return [
+                "error" => true, 
+                "status" => 404, 
+                "message" => "El link al que está intentado acceder no existe o fue eliminado"
+            ];
+
+        if(!$url->actived)
+            return [
+                "error" => true, 
+                "status" => 400, 
+                "message" => "El link al que está intentando acceder no está habilitado"
+            ];
+
+        if($url->visits->count() >= $url->expiration_clicks || $url->expiration_time < now())
+            return [
+                "error" => true, 
+                "status" => 400, 
+                "message" => "El link al que está intentado acceder expiró"
+            ];
+
+        return [
+            "error" => false, 
+            "status" => 200, 
+            "url" => $url->url,
+            "message" => "Se puede redireccionar"
+        ];
+
 
     }
 

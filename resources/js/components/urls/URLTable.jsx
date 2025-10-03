@@ -129,7 +129,7 @@ const URLTable = ({ urls }) => {
 
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex gap-2">
-                                        <Button
+                                        <Button className="rounded-2xl"
                                             variant="ghost"
                                             onClick={() =>
                                                 handleCopy(
@@ -142,14 +142,14 @@ const URLTable = ({ urls }) => {
                                         >
                                             <Copy />
                                         </Button>
-                                        <Button
+                                        <Button className="rounded-2xl"
                                             onClick={() =>
                                                 handleRegenerateUrl(url.id)
                                             }
                                         >
                                             <Redo />
                                         </Button>
-                                        <Button
+                                        <Button className="rounded-2xl"
                                             variant="secondary"
                                             onClick={() => {
                                                 setSelectedUrl(url);
@@ -158,7 +158,7 @@ const URLTable = ({ urls }) => {
                                         >
                                             <Edit />
                                         </Button>
-                                        <Button
+                                        <Button className="rounded-2xl"
                                             variant="destructive"
                                             onClick={() =>
                                                 handleDeleteUrl(url.id)

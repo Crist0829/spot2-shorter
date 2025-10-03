@@ -2,7 +2,6 @@ import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarGroup,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
@@ -31,7 +30,7 @@ export function AppSidebar({ userRoles }) {
             <SidebarContent>
                 <SidebarMenu className="">
                     <SidebarMenuItem className="px-2">
-                        <SidebarMenuButton className="bg-stone-100/70 text-lg">
+                        <SidebarMenuButton>
                         <List className="mr-2 h-4 w-4" /> Dashboard 
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -50,5 +49,5 @@ export function AppSidebar({ userRoles }) {
                 </SidebarMenuItem>
             </SidebarFooter>
         </Sidebar>
-    );
+    )
 }
