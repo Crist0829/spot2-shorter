@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/nginx/development/Dockerfile
-    container_name: spot_app_development
+    container_name: spot_app_dev
     environment:
       VIRTUAL_HOST: development.spot-shorter.click
       LETSENCRYPT_HOST: development.spot-shorter.click
@@ -20,7 +20,7 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: ne_mysql_development
+    container_name: spot_mysql_dev
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -35,7 +35,7 @@ services:
 
   redis:
     image: "redis:alpine"
-    container_name: ne_redis_development
+    container_name: spot_redis_dev
     restart: unless-stopped
     ports:
       - "6380:6379"
