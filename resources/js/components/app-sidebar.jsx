@@ -16,14 +16,13 @@ import { Button } from "./ui/button";
 import SidebarMenuForUser from "../helpers/SidebarMenuForUser";
 
 export function AppSidebar({ userRoles }) {
-    console.log(userRoles);
 
     return (
         <Sidebar>
             <SidebarHeader>
                 <SidebarMenuItem className="flex justify-center my-2">
                     <div>
-                        <Link>
+                        <Link href={route("dashboard")}>
                             <img src={Logo} alt="logo" />
                         </Link>
                     </div>
