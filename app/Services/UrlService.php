@@ -3,15 +3,17 @@
 namespace App\Services;
 
 use App\Repositories\UrlRepository;
+use App\Repositories\UrlVisitRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class UrlService {
 
 
-    public function __construct(protected UrlRepository $urlRepository){}
+    public function __construct(protected UrlRepository $urlRepository, protected UrlVisitRepository $urlVisitRepsitory){}
 
 
     public function create(array $data){
@@ -185,7 +187,7 @@ class UrlService {
     }
 
 
-    public function validateUrlToRedirect(string $code){
+    public function validateUrlToRedirect(string $code, string $ip){
 
         $url = $this->urlRepository->getFirstByFilters(['visits'], [['code', '=', $code]]);
 
@@ -203,12 +205,17 @@ class UrlService {
                 "message" => "El link al que está intentando acceder no está habilitado"
             ];
 
-        if($url->visits->count() >= $url->expiration_clicks || $url->expiration_time < now())
+
+        if(($url->expiration_clicks && $url->visits->count() >= $url->expiration_clicks) || ($url->expiration_time && $url->expiration_time < now()))
             return [
                 "error" => true, 
                 "status" => 400, 
                 "message" => "El link al que está intentado acceder expiró"
             ];
+
+
+        $this->saveVisit($url, $ip);
+        
 
         return [
             "error" => false, 
@@ -220,6 +227,19 @@ class UrlService {
 
     }
 
+
+    private function saveVisit($url, $ip){
+        $urlVisit = $this->urlVisitRepsitory->getFirstByFilters([], [['ip', '=', $ip], ['url_id', '=', $url->id], 
+                                                                    [DB::raw('DATE(created_at)'), '=', now()->toDateString()]]);
+
+        if($urlVisit){
+            Log::info('Ya se había contado la visita a la url el día de hoy : ' . $url->id);
+            return;
+        }
+
+        $urlVisit = $this->urlVisitRepsitory->create(['ip' => $ip, 'url_id' => $url->id]);
+        //TODO:  Save more info
+    }
 
 
 }

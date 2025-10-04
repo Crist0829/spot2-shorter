@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class UrlVisit extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['ip', 'url_id', 'location', 'metadata'];
 }

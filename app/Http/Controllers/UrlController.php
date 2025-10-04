@@ -88,11 +88,13 @@ class UrlController extends Controller
         session()->flash($response["error"] ? 'not_success' : 'success', $response["message"]);
     }
 
-    public function redirect(string $code){
+    public function redirect(string $code, Request $request){
 
-        $response = $this->urlService->validateUrlToRedirect($code);
+        $response = $this->urlService->validateUrlToRedirect($code, $request->ip());
+
         if($response['error'])
             return Inertia::render('RedirectError', ["message" =>  $response['message']]);
+
 
         return redirect($response['url']);
 
