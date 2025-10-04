@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -13,6 +15,7 @@ class AuthController extends Controller
 {
 
     public function __construct(protected UserRepository $userRepository,
+                                protected RoleRepository $roleRepository,
                                 protected UserService $userService)
     {
         
@@ -37,9 +40,12 @@ class AuthController extends Controller
                 "email" => $googleUser->getEmail(),
                 "actived" => now() 
             ]);
-        } 
 
-        $user = $this->userRepository->getFirstByFilters([], [['email', '=', $googleUser->getEmail()]]);
+            $role = $this->roleRepository->getById(Role::ROLE_USER);
+            $user = $this->userRepository->getFirstByFilters([], [['email', '=', $googleUser->getEmail()]]);
+            $user->roles()->save($role);
+        } 
+        
 
         Auth::login($user);
         return redirect()->intended(route('dashboard', absolute: false));
