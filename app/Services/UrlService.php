@@ -187,7 +187,7 @@ class UrlService {
     }
 
 
-    public function validateUrlToRedirect(string $code, string $ip){
+    public function validateUrlToRedirect(string $code, string $ip = '127.0.0.1'){
 
         $url = $this->urlRepository->getFirstByFilters(['visits'], [['code', '=', $code]]);
 
