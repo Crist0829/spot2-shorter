@@ -35,7 +35,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_SECRET }}
           script: |
-            EOF
             cd ${{ env.ANALIZER_DIR }}
             cat << EOF > ./.env
             ${{ secrets.ANALIZER_DEV_ENV_FILE }}
@@ -43,6 +42,7 @@ jobs:
             cd ${{ env.DEPLOY_DIR }}
             cat << EOF > ./.env
             ${{ secrets.DEV_ENV_FILE }}
+            EOF
             docker compose -f docker-compose-development.yml down
             docker compose -f docker-compose-development.yml up --build -d
             docker exec spot_app_dev sh -c  'chmod 777 -R ./storage/'
