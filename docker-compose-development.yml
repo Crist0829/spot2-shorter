@@ -44,7 +44,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: spot_rabbitmq
+    container_name: spot_dev_rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
