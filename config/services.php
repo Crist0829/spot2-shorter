@@ -41,4 +41,13 @@ return [
 
     ],
 
+    'rabbitmq' => [
+        'host' => env('RABBITMQ_HOST', 'rabbitmq'),
+        'port' => env('RABBITMQ_PORT', 5672),
+        'user' => env('RABBITMQ_USER', 'guest'),
+        'password' => env('RABBITMQ_PASSWORD', 'guest'),
+        'queue_to_analyze' => env('RABBITMQ_QUEUE_TO_ANALYZE', 'urls.to_analyze'),
+        'queue_results' => env('RABBITMQ_QUEUE_RESULTS', 'urls.analysis_result'),
+    ]
+
 ];

@@ -10,7 +10,7 @@ class Url extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["url", "code", "user_id", "actived", "expiration_time", "expiration_clicks", "ip"];
+    protected $fillable = ["url", "code", "user_id", "actived", "expiration_time", "expiration_clicks", "ip", "analysis_id"];
 
     public function visits() : HasMany
     {

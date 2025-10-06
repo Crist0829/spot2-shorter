@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Facades\Rabbit;
+use App\Models\UrlAnalysisStatus;
+use App\Repositories\UrlAnalysisRepository;
 use App\Repositories\UrlRepository;
 use App\Repositories\UrlVisitRepository;
 use Carbon\Carbon;
@@ -13,7 +16,11 @@ use Illuminate\Support\Str;
 class UrlService {
 
 
-    public function __construct(protected UrlRepository $urlRepository, protected UrlVisitRepository $urlVisitRepsitory){}
+    public function __construct(protected UrlRepository $urlRepository, 
+                                protected UrlVisitRepository $urlVisitRepsitory, 
+                                protected UrlAnalysisRepository $urlAnalysisRepository,
+                                /* protected RabbitMQService $rabbitMQService */)
+                                {}
 
 
     public function create(array $data){
@@ -24,6 +31,25 @@ class UrlService {
             $data["expiration_time"] =  $data["expiration_time"] ? Carbon::createFromDate($data["expiration_time"])->toDateTimeString() : null;
             
             $url = $this->urlRepository->create($data);
+
+
+            $analysis = $this->urlAnalysisRepository->create([
+                'url_id' => $url->id,
+                'status_id' => UrlAnalysisStatus::STATUS_PENDING,
+            ]);
+    
+            $url->update(['analysis_id' => $analysis->id]);
+    
+           /*  $this->rabbitMQService->publish( [
+                'url' => $url->url,
+                'id' => $url->id,
+            ]); */
+
+            Rabbit::publish([
+                'url' => $url->url,
+                'id' => $url->id,
+            ]);
+
             return [
                 "error" => false,
                 "status" =>  200,
@@ -75,6 +101,25 @@ class UrlService {
                 ];
 
             $url = $this->urlRepository->create($data);
+
+            $analysis = $this->urlAnalysisRepository->create([
+                'url_id' => $url->id,
+                'status_id' => UrlAnalysisStatus::STATUS_PENDING,
+            ]);
+    
+            $url->analysis_id = $analysis->id;
+            $url->save();
+
+            /* $this->rabbitMQService->publish( [
+                'url' => $url->url,
+                'id' => $url->id,
+            ]); */
+
+            Rabbit::publish([
+                'url' => $url->url,
+                'id' => $url->id,
+            ]);
+
             return [
                 "error" => false,
                 "status" =>  200,

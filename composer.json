@@ -13,6 +13,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.8",
+        "php-amqplib/php-amqplib": "^3.7",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

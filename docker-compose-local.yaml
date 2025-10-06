@@ -7,6 +7,8 @@ volumes:
     driver: local
   mailpitdata:
     driver: local
+  rabbitdata:
+    driver: local
 
 services:
   nginx:
@@ -37,8 +39,6 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: spot_mysql
     volumes:
       - dbdata:/var/lib/mysql/
     networks:
@@ -135,3 +135,33 @@ services:
       - 8085:8080
     networks:
       - spotnet
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: spot_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitdata:/var/lib/rabbitmq
+    networks:
+      - spotnet
+    restart: unless-stopped
+
+  analizer:
+    build:
+      context: ./analizer
+    container_name: spot_analizer
+    volumes:
+      - ./analizer:/app
+    working_dir: /app
+    command: ["python", "url_analyzer.py"]
+    depends_on:
+      - rabbitmq
+    networks:
+      - spotnet
+    restart: unless-stopped
+
