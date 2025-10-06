@@ -1,2 +1,1 @@
 * * * * * net cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1
-@reboot cd /var/www/html && php artisan urls:process-analysis-results >> /var/www/html/storage/logs/url_analysis.log 2>&1 &
