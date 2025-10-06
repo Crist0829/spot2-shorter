@@ -84,3 +84,5 @@ networks:
 volumes:
   dbdata:
     driver: local
+  rabbitdata:
+    driver: local
