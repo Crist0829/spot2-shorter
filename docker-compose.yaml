@@ -13,6 +13,8 @@ services:
       LETSENCRYPT_EMAIL: ccjd.0796@gmail.com
     expose:
       - "80"
+    env_file:
+      - .env 
     volumes:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
