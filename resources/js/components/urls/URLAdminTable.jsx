@@ -83,7 +83,7 @@ const URLAdminTable = ({ urls }) => {
                                     {url.url}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {`${import.meta.env.VITE_APP_URL}/short/${
+                                    {`${import.meta.env.VITE_APP_URL}/s/${
                                         url.code
                                     }`}
                                 </td>

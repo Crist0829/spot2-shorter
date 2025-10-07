@@ -82,7 +82,7 @@ const URLTable = ({ urls }) => {
                                     {url.url}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {`${import.meta.env.VITE_APP_URL}/short/${
+                                    {`${import.meta.env.VITE_APP_URL}/s/${
                                         url.code
                                     }`}
                                 </td>
@@ -135,8 +135,8 @@ const URLTable = ({ urls }) => {
                                                 handleCopy(
                                                     `${
                                                         import.meta.env
-                                                            .VITE_BASE_URL
-                                                    }/short/${url.code}`
+                                                            .VITE_APP_URL
+                                                    }/s/${url.code}`
                                                 )
                                             }
                                         >

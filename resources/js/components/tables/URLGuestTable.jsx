@@ -47,7 +47,7 @@ const URLGuestTable = ({ urls }) => {
                                     {url.url}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {`${import.meta.env.VITE_APP_URL}/short/${url.code}`}
+                                    {`${import.meta.env.VITE_APP_URL}/s/${url.code}`}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {url.actived ? <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
