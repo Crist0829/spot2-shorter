@@ -1,5 +1,6 @@
 import URLDialog from "@/components/urls/URLDialog";
 import URLTable from "@/components/urls/URLTable";
+import Message from "@/components/utils/Message";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
@@ -21,7 +22,7 @@ const Index = ({ auth, urls }) => {
           Links acortados
         </h1>
 
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-end mb-6 lg:mr-20">
           <URLDialog 
             triggerLabel="Acortar link"
           
@@ -37,10 +38,8 @@ const Index = ({ auth, urls }) => {
             <URLTable urls={urls} />
           </div>
         ) : (
-          <div className="flex items-center justify-center py-12">
-            <h2 className="text-lg font-medium text-gray-500">
-              Aún no has acortado links
-            </h2>
+          <div className="flex justify-center items-center">
+            <Message message={"Aún no has acortados links"}/>
           </div>
         )}
       </section>

@@ -32,7 +32,7 @@ export default function Dashboard({ auth }) {
         >
             <Head title="Dashboard" />
 
-            <h1 className="text-center text-4xl my-6">
+            <h1 className="text-center text-4xl my-8">
                 Hola, {auth.user.name}
             </h1>
 
