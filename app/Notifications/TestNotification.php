@@ -52,7 +52,9 @@ class TestNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'title' => "Test Notifications",
+            'body' => "Noelia",
+            'link' => "ñ"
         ];
     }
 

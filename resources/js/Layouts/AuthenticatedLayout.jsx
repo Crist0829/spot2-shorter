@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { getFlashAvailableMessage } from "@/helpers/Helpers"
 import useRegisterServiceWorker from "@/hooks/useRegisterServiceWorker"
 import useNotificationState from "@/stores/notifications.store"
-import { usePage } from "@inertiajs/react"
+import { router, usePage } from "@inertiajs/react"
 import { useEffect } from "react"
 
 export default function Authenticated({ user, children }) {
@@ -15,10 +15,6 @@ export default function Authenticated({ user, children }) {
   const updateUnReadNotification = useNotificationState(
     (state) => state.updateUnReadNotification
   )
-
-
-  console.log(auth.user)
-
   useEffect(() => {
     getFlashAvailableMessage(flash)
   }, [flash])
@@ -31,12 +27,22 @@ export default function Authenticated({ user, children }) {
       window.Echo.private("notifications.user." + auth.user.id)
       window.Echo.private("notifications.user." + auth.user.id).notification(
         (newNotification) => {
-          const newNotifications = [...notifications, newNotification]
-          updateUnReadNotification(newNotifications)
+          router.reload()
         }
       )
     }
-  }, [auth])
+  }, [])
+
+  useEffect(() => {
+    if (Array.isArray(auth.user.unread_notifications)) {
+      updateUnReadNotification(auth.user.unread_notifications)
+    }
+
+    if (Array.isArray(auth.user.read_notifications)) {
+        updateUnReadNotification(auth.user.read_notifications)
+      }
+
+  }, [auth.user.unread_notifications, auth.user.read_notifications])
 
   useRegisterServiceWorker({ auth })
 

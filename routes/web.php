@@ -42,3 +42,4 @@ Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback
 require __DIR__.'/auth.php';
 require __DIR__.'/urls.php';
 require __DIR__.'/users.php';
+require __DIR__.'/notifications.php';

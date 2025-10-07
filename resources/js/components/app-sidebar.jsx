@@ -52,7 +52,8 @@ export function AppSidebar({ userRoles }) {
           </SidebarMenuItem>
           {SidebarMenuForUser(userRoles)}
           <SidebarMenuItem className="px-2">
-            <SidebarMenuButton className="flex items-center relative">
+            <SidebarMenuButton  asChild>
+              <Link href={route("notifications")} className="flex items-center relative">
               <div className="relative">
                 <Bell className="h-5 w-5" />
                 {qtUnReadNotification > 0 && (
@@ -62,6 +63,7 @@ export function AppSidebar({ userRoles }) {
                 )}
               </div>
               <span className="ml-2">Notificaciones</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

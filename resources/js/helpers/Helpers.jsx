@@ -1,7 +1,5 @@
-import { JSXElementConstructor, ReactElement, ReactNode } from "react"
 import { toast } from "sonner"
 
-//Muestra el mensaje flash enviado
 export const getFlashAvailableMessage = (flash) => {
     const flashMessages = Object.keys(flash)
     let messageToShow = null
