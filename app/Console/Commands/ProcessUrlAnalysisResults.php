@@ -2,11 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Notifications\UrlAnalyisisCompleted;
 use Illuminate\Console\Command;
 use App\Facades\Rabbit;
 use App\Models\Url;
 use App\Models\UrlAnalysis;
 use App\Models\UrlAnalysisStatus;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
@@ -44,11 +46,15 @@ class ProcessUrlAnalysisResults extends Command
 
             $statusName = $data['status'] ?? ($data['safe'] ?? false ? 'safe' : 'unsafe');
             $status = UrlAnalysisStatus::firstOrCreate(['name' => $statusName]);
-
             $analysis = UrlAnalysis::where('url_id', $url->id)->first();
-
             $analysis->status_id = $status->id;
             $analysis->analysis_details = isset($data['details']) ? json_encode($data['details']) : null;
+
+            //Send Notification
+            $user = User::find($url->user_id);
+            if($user)
+                $user->notify(new UrlAnalyisisCompleted($status->name));
+
             $analysis->error_message = $data['error'] ?? null;
             $analysis->save();
 

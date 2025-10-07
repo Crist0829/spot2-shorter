@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UrlAdminController;
 use App\Http\Controllers\UrlController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,12 @@ Route::middleware('auth')->group(function (){
     Route::delete('urls/{url_id}', [UrlController::class, 'delete'])->name('urls.delete');
 });
 
+
+Route::middleware('auth')->group(function (){
+    Route::get('admin/urls', [UrlAdminController::class, 'index'])->name('admin.urls.index');
+    //Route::post('admin/urls', [UrlAdminController::class, 'create'])->name('admin.urls.create');
+    Route::put('admin/urls/{url_id}', [UrlAdminController::class, 'update'])->name('admin.urls.update');
+    Route::put('admin/urls/regenerate/{url_id}', [UrlAdminController::class, 'regenerate'])->name('admin.urls.regenerate');
+    Route::delete('admin/urls/{url_id}', [UrlAdminController::class, 'delete'])->name('admin.urls.delete');
+});
 

@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -11,14 +10,14 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\PusherPushNotifications\PusherChannel;
 use NotificationChannels\PusherPushNotifications\PusherMessage;
 
-class TestNotification extends Notification
+class UrlAnalyisisCompleted extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public string $analysisResult)
     {
         //
     }
@@ -52,29 +51,31 @@ class TestNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => "Test Notifications",
-            'body' => "Noelia",
-            'link' => "ñ"
+            'title' => "Se analizó un link cargado",
+            'body' => "El resultado fue " . $this->analysisResult,
+            'link' => env('APP_URL') . '/urls'
         ];
+    }
+
+
+    public function toBroadcast($notifiable)
+    {
+        return (new BroadcastMessage([
+            "data" => [
+                'title' =>  "Se analizó un link cargado",
+                'body' => "El resultado fue " . $this->analysisResult,
+            ]
+        ]))->onQueue('broadcasts');
     }
 
     public function toPushNotification($notifiable)
     {
         return PusherMessage::create()
             ->platform('web')
-            ->title('Noelia')
-            ->body('Estoy creando mi primera notificación que emoción')
-            ->link(env('APP_URL'));
+            ->title('Se analizó un link cargado')
+            ->body("El resultado fue " . $this->analysisResult)
+            ->link( env('APP_URL') . '/urls');
     }
 
-    public function toBroadcast($notifiable)
-    {
-        return (new BroadcastMessage([
-            "data" => [
-                'title' =>  "Noelia",
-                'body' => "Esta es una notificación in-real-time",
-                'created_at' => now(),
-            ]
-        ]))->onQueue('broadcasts');
-    }
+
 }

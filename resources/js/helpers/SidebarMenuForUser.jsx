@@ -13,6 +13,11 @@ const SidebarMenuForUser = (userRoles) => {
                     <Link href={route("users.index")}><User className="mr-2 h-4 w-4" /> Usuarios</Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>,
+                 <SidebarMenuItem key="urls" className="px-2">
+                 <SidebarMenuButton asChild>
+                 <Link href={route("admin.urls.index")}><ILink className="mr-2 h-4 w-4" />Links</Link>
+                 </SidebarMenuButton>
+             </SidebarMenuItem>,
             ],
         },
         {
