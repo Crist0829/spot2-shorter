@@ -1,27 +1,29 @@
 # 🚀 Proyecto Laravel - Spot Shorter
 
-Este proyecto es una aplicación Laravel que puede ejecutarse de dos formas:  
-1. **Localmente en tu máquina con PHP instalado**  
-2. **Usando Docker y Docker Compose** (recomendado para entornos aislados y consistentes)
+Este proyecto es una aplicación **Laravel 10 + React + Docker** que permite acortar URLs, analizarlas mediante un microservicio en Python, y recibir notificaciones en tiempo real.  
+Puede ejecutarse de dos formas:  
+1. **Localmente con PHP y Node.js instalados**  
+2. **Usando Docker Compose** (recomendado para entornos consistentes)
 
 ---
 
 ## 📦 Requisitos previos
 
 ### Opción 1 - Entorno Local
-- PHP >= 8.2
-- Composer
-- MySQL 8
-- Node.js >= 18 + NPM
-- Redis (opcional, para caché/colas)
+- PHP >= 8.2  
+- Composer  
+- MySQL 8  
+- Node.js >= 18  
+- Redis (opcional, para caché o colas)  
+- RabbitMQ (si usás el analizer)
 
 ### Opción 2 - Con Docker
-- Docker >= 20.x
-- Docker Compose >= 1.29.x
+- Docker >= 20.x  
+- Docker Compose >= 1.29.x  
 
 ---
 
-## ⚙️ Instalación (ambas opciones)
+## ⚙️ Instalación
 
 1. Clona el repositorio:
    ```bash
@@ -29,129 +31,241 @@ Este proyecto es una aplicación Laravel que puede ejecutarse de dos formas:
    cd spot2-shorter
    ```
 
-2. Copia el archivo de entorno:
+2. Copia el archivo `.env`:
    ```bash
    cp .env.example .env
    ```
 
-3. Genera la key de Laravel:
+3. Genera la APP_KEY:
    ```bash
    php artisan key:generate
    ```
-   *(Si usas Docker lo haremos con el contenedor `artisan` más adelante).*
+   *(O desde el contenedor con `docker compose run --rm artisan key:generate`.)*
 
 ---
 
-## ▶️ Opción 1: Correr en entorno local
+## ▶️ Correr en entorno local
 
-1. Instala dependencias PHP:
+1. Instala dependencias:
    ```bash
    composer install
-   ```
-
-2. Instala dependencias frontend:
-   ```bash
    npm install && npm run dev
    ```
 
-3. Configura tu base de datos MySQL en `.env` y corre migraciones:
+2. Configura la base de datos y corre migraciones:
    ```bash
-   php artisan migrate
-   php artisan db:seed RoleSeeder
-   php artisan db:seed UserSeeder
+   php artisan migrate --seed
    ```
 
-4. Inicia el servidor:
+3. Inicia el servidor:
    ```bash
    php artisan serve
    ```
 
-La aplicación estará disponible en 👉 `http://127.0.0.1:8000`
+👉 Accedé a `http://127.0.0.1:8000`
 
 ---
 
-## 🐳 Opción 2: Correr con Docker
+## 🐳 Correr con Docker
 
-1. Levanta los servicios:
+1. Levantá los servicios:
    ```bash
    docker compose -f docker-compose-local.yml up -d --build
    ```
 
-   Esto levantará:
-   - `nginx` en `http://localhost`
-   - `mysql` en `localhost:3306`
-   - `redis` en `localhost:6379`
-   - `mailpit` en `http://localhost:8025`
-   - `adminer` en `http://localhost:8085`
+   Esto levanta:
+   - **Nginx** → `http://localhost`
+   - **MySQL** → `localhost:3306`
+   - **Redis** → `localhost:6379`
+   - **RabbitMQ** → `http://localhost:15672`
+   - **Analizer** → servicio Python que consume RabbitMQ
+   - **Mailpit** → `http://localhost:8025`
+   - **Adminer** → `http://localhost:8085`
 
-2. Instala dependencias PHP dentro del contenedor:
+2. Instalá dependencias dentro del contenedor:
    ```bash
-   docker compose -f docker-compose-local.yml run --rm composer install
+   docker compose run --rm composer install
+   docker compose run --rm npm install
+   docker compose run --rm npm run build
    ```
 
-3. Instala dependencias frontend:
+3. Migraciones y seeders:
    ```bash
-   docker compose -f docker-compose-local.yml run --rm npm install
-   docker compose -f docker-compose-local.yml run --rm npm run dev
+   docker compose run --rm artisan migrate --seed
    ```
 
-4. Genera la key de Laravel:
-   ```bash
-   docker compose -f docker-compose-local.yml run --rm artisan key:generate
-   ```
-
-5. Ejecuta migraciones y seeders:
-   ```bash
-   docker compose -f docker-compose-local.yml run --rm artisan migrate
-   docker compose -f docker-compose-local.yml run --rm artisan db:seed --class=RoleSeeder
-   docker compose -f docker-compose-local.yml run --rm artisan db:seed --class=UserSeeder
-   ```
-
-6. Listo 🎉. Accede a la aplicación en:
+4. Listo 🎉  
+   Accedé a:
    ```
    http://localhost
    ```
 
 ---
 
+## 🧠 Analizer (Microservicio Python)
+
+El **Analizer** es un microservicio encargado de procesar y analizar las URLs acortadas (por ejemplo, validación, metadata, comportamiento HTTP, etc.).  
+Está construido en Python y se comunica con Laravel mediante **RabbitMQ**.
+
+### 🧩 Estructura
+El servicio está en el directorio:
+```
+/analizer/
+```
+
+Archivo principal:
+```
+url_analyzer.py
+```
+
+### ⚙️ Flujo de trabajo
+
+1. Laravel publica mensajes en la cola `url_analysis_queue` a través de RabbitMQ.  
+2. El contenedor `analizer` escucha esa cola.  
+3. Cuando llega una URL, el servicio Python la analiza y devuelve los resultados.  
+4. Laravel recibe los resultados o los guarda en base de datos.
+
+### 🔧 Configuración (en `docker-compose.yml`)
+```yaml
+analizer:
+  build:
+    context: ./analizer
+  container_name: spot_analizer
+  command: ["python", "url_analyzer.py"]
+  depends_on:
+    - rabbitmq
+  networks:
+    - spot_net
+  restart: unless-stopped
+```
+
+---
+
+## 🐇 RabbitMQ
+
+RabbitMQ se utiliza como **broker de mensajería** para comunicar el backend Laravel con el Analizer.
+
+### 📍 Acceso al panel
+- **Desarrollo:** [https://rabbitmq-development.spot-shorter.click](https://rabbitmq-development.spot-shorter.click)  
+- **Producción:** [https://rabbitmq.spot-shorter.click](https://rabbitmq.spot-shorter.click)  
+
+### 🔑 Credenciales por defecto
+```
+Usuario: guest
+Contraseña: guest
+```
+
+*(Podés cambiarlas en las variables de entorno o en el compose.)*
+
+### 🧩 Variables relevantes (`.env`)
+```
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+RABBITMQ_QUEUE=url_analysis_queue
+```
+
+### 🧰 Uso en Laravel
+El proyecto usa una capa de servicio o job que envía mensajes a RabbitMQ, por ejemplo:
+
+```php
+RabbitMQ::publish('url_analysis_queue', [
+    'url' => $shortenedUrl,
+    'user_id' => auth()->id(),
+]);
+```
+
+---
+
+## 🔔 Notificaciones en tiempo real
+
+Spot Shorter incluye un sistema de **notificaciones web en tiempo real**, usando:
+- **Laravel Notifications + Broadcast**
+- **Pusher** (WebSockets)
+- **Laravel Echo** en el frontend React
+
+### ⚙️ Configuración en `.env`
+```
+BROADCAST_DRIVER=pusher
+PUSHER_APP_ID=xxxxxx
+PUSHER_APP_KEY=xxxxxx
+PUSHER_APP_SECRET=xxxxxx
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+```
+
+### 🧩 Flujo
+
+1. Cuando ocurre un evento (ej. nueva URL analizada, mensaje, etc.), Laravel emite una notificación con:
+   ```php
+   Notification::send($user, new TestNotification());
+   ```
+
+2. Laravel la guarda en base de datos y la envía por **broadcast** vía Pusher.
+
+3. El frontend escucha en tiempo real usando **Echo**:
+   ```js
+   window.Echo.private(`notifications.user.${userId}`)
+     .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', (notification) => {
+       console.log(notification)
+     })
+   ```
+
+4. La UI muestra el contador de notificaciones no leídas y renderiza el listado dinámicamente.
+
+---
+
 ## 📬 Servicios incluidos (Docker)
 
-- **Nginx** → Servidor web (`http://localhost`)  
-- **MySQL 8** → Base de datos (`localhost:3306`)  
-- **Redis** → Cache / Queues (`localhost:6379`)  
-- **Mailpit** → Cliente SMTP para pruebas (`http://localhost:8025`)  
-- **Adminer** → Cliente DB web (`http://localhost:8085`)  
+| Servicio  | Propósito | Puerto / URL |
+|------------|------------|--------------|
+| **Nginx** | Servidor web principal | http://localhost |
+| **MySQL 8** | Base de datos | 3306 |
+| **Redis** | Cache / Queues | 6379 |
+| **RabbitMQ** | Mensajería interna | 15672 / 5672 |
+| **Analizer** | Microservicio de análisis de URLs | interno |
+| **Mailpit** | SMTP para testing | http://localhost:8025 |
+| **Adminer** | UI de base de datos | http://localhost:8085 |
 
 ---
 
 ## 👤 Usuarios iniciales
-Después de correr los seeders, se crearán roles y un usuario por defecto:
 
-- **Rol Administrador (id=1)** → puede administrar usuarios y links.  
-- **Rol Usuario (id=2)** → puede acortar links.  
+Al ejecutar los seeders, se crean los roles y usuarios base:
 
-*(Ver detalles en `RoleSeeder` y `UserSeeder`).*
+| Rol | Permisos |
+|------|-----------|
+| **Administrador** | Gestiona usuarios y links |
+| **Usuario** | Acorta URLs y visualiza métricas personales |
 
 ---
 
-## 🛠 Comandos útiles (Docker)
+## 🧰 Comandos útiles (Docker)
 
-- Correr migraciones:
-  ```bash
-  docker compose -f docker-compose-local.yml run --rm artisan migrate
-  ```
+```bash
+# Migraciones y seeders
+docker compose run --rm artisan migrate --seed
 
-- Correr tests:
-  ```bash
-  docker compose -f docker-compose-local.yml run --rm artisan test
-  ```
+# Correr tests
+docker compose run --rm artisan test
 
-- Ejecutar npm:
-  ```bash
-  docker compose -f docker-compose-local.yml run --rm npm run dev
-  ```
+# NPM dev o build
+docker compose run --rm npm run dev
+docker compose run --rm npm run build
+```
 
 ---
 
 ## ✅ Listo
-Ya podés trabajar en el proyecto tanto **localmente** como con **Docker**.
+
+Ya tenés tu entorno completo:
+- 🖥️ Backend Laravel + React  
+- 🐇 RabbitMQ  
+- 🧠 Microservicio Analizer en Python  
+- 🔔 Notificaciones en tiempo real  
+- 🐳 Orquestado con Docker  
+
+Podés acceder a los servicios desplegados y comenzar a trabajar 🚀
