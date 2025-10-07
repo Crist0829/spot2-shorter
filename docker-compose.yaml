@@ -43,6 +43,39 @@ services:
     networks:
       - spot_net
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: spot_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      VIRTUAL_HOST: rabbitmq.spot-shorter.click
+      VIRTUAL_PORT: 15672
+      LETSENCRYPT_HOST: rabbitmq.spot-shorter.click
+      LETSENCRYPT_EMAIL: ccjd.0796@gmail.com
+    volumes:
+      - rabbitdata:/var/lib/rabbitmq
+    expose:
+      - "15672"
+    networks:
+      - spot_net
+      - nginx-proxy
+    restart: unless-stopped
+
+  analizer:
+    build:
+      context: ./analizer
+    container_name: spot_dev_analizer
+    volumes:
+      - ./analizer:/app
+    working_dir: /app
+    command: ["python", "url_analyzer.py"]
+    depends_on:
+      - rabbitmq
+    networks:
+      - spot_net
+    restart: unless-stopped
+
 networks:
   nginx-proxy:
     external: true
@@ -51,4 +84,6 @@ networks:
 
 volumes:
   dbdata:
+    driver: local
+  rabbitdata:
     driver: local
