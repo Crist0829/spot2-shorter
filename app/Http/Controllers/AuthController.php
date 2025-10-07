@@ -40,11 +40,13 @@ class AuthController extends Controller
                 "email" => $googleUser->getEmail(),
                 "actived" => now() 
             ]);
-
-            $role = $this->roleRepository->getById(Role::ROLE_USER);
+            
             $user = $this->userRepository->getFirstByFilters([], [['email', '=', $googleUser->getEmail()]]);
-            $user->roles()->save($role);
         } 
+
+        $role = $this->roleRepository->getById(Role::ROLE_USER);
+        if(!$user->hasRole($role->name))
+            $user->roles()->save($role);
 
         $token = $user->createToken('notifications_token', ['notifications'])->plainTextToken;
         $user->notifications_token = $token;
