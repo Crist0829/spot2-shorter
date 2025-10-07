@@ -31,8 +31,11 @@ class HandleInertiaRequests extends Middleware
     {
 
         $request->user() ? $request->user()->roles : $request->user();
+        $request->user() ? $request->user()->preferences : $request->user();
+        $request->user() ? $request->user()->unreadNotifications : $request->user();
+
+        
         $flashKeys = ['success', 'not_success'];
-        // Captura el valor de las variables de sesión y toma el mensaje si existe
         $flash = collect($flashKeys)->mapWithKeys(function ($key) {
             return [$key => fn() => request()->session()->pull($key)];
         })->all();

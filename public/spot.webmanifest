@@ -1,0 +1,21 @@
+{
+    "name": "SPOT SHORTER",
+    "short_name": "Spot Shorter",
+    "description": "Acortador de links",
+    "icons": [
+      {
+        "src": "icon-32.png",
+        "sizes": "32x32",
+        "type": "image/png"
+      },
+      {
+        "src": "icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#F5A623",
+    "background_color": "#000"
+  }

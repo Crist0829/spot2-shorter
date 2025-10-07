@@ -45,7 +45,10 @@ class AuthController extends Controller
             $user = $this->userRepository->getFirstByFilters([], [['email', '=', $googleUser->getEmail()]]);
             $user->roles()->save($role);
         } 
-        
+
+        $token = $user->createToken('notifications_token', ['notifications'])->plainTextToken;
+        $user->notifications_token = $token;
+        $user->save();
 
         Auth::login($user);
         return redirect()->intended(route('dashboard', absolute: false));

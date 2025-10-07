@@ -15,8 +15,13 @@
         @viteReactRefresh
         @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
         @inertiaHead
+
+         <!-- PWA -->
+        <meta name="theme-color" content="#F5A623">
+        <link rel="manifest" href="{{ url('spot.webmanifest') }}">
+        <link rel="icon" href="{{ asset('icon-32.png') }}" type="image/png">
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased">  
         @inertia
     </body>
 </html>

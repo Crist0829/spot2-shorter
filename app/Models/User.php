@@ -25,6 +25,21 @@ class User extends Authenticatable
         'password',
     ];
 
+    public $pushNotificationType = 'users';
+
+    public function routeNotificationForPusherPushNotifications($notification): string
+    {
+        return $this->id;
+    }
+
+    public function receivesBroadcastNotificationsOn(): string
+    {
+
+        return 'notifications.user.'.$this->id;
+
+    }
+
+
     /**
      * The attributes that should be hidden for serialization.
      *

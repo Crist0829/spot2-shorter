@@ -50,6 +50,10 @@ class RegisteredUserController extends Controller
             "role_id" => Role::ROLE_USER,
         ]);
 
+        $token = $user->createToken('notifications_token', ['notifications'])->plainTextToken;
+        $user->notifications_token = $token;
+        $user->save();
+
         event(new Registered($user));
 
         Auth::login($user);

@@ -48,6 +48,11 @@ return [
         'password' => env('RABBITMQ_PASSWORD', 'guest'),
         'queue_to_analyze' => env('RABBITMQ_QUEUE_TO_ANALYZE', 'urls.to_analyze'),
         'queue_results' => env('RABBITMQ_QUEUE_RESULTS', 'urls.analysis_result'),
-    ]
+    ], 
+
+    'pusher' => [
+        'beams_instance_id' => env('PUSHER_BEAMS_INSTANCE_ID'),
+        'beams_secret_key' => env('PUSHER_BEAMS_SECRET_KEY'),
+    ],
 
 ];
