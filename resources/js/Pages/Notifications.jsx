@@ -43,7 +43,7 @@ const Notifications = ({auth, notifications, unReadNotifications}) =>  {
           onSuccess: ({ props }) => {
             const { data } = props.notifications.data
             updateAllNotification([...oldNotifications, ...data])
-          },
+          }, 
         }
       )
     }
@@ -54,12 +54,8 @@ const Notifications = ({auth, notifications, unReadNotifications}) =>  {
       <Head title="Notificaciones" />
       <Authenticated user={auth.user}>
         <div
-          id="notifications"
           className="page-to-observe flex flex-col items-center justify-center w-11/12 mx-auto max-w-[768px] pb-5"
         >
-          {/* <div className="flex justify-start  mr-auto mt-5">
-            <Title title="Notificaciones" />
-          </div> */}
           <section className="w-full">
             {data.length > 0 ? (
               <>
